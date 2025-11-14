@@ -1,0 +1,7 @@
+name: infrastructure
+runtime:
+  name: nodejs
+  options:
+    typescript: true
+description: AWS infrastructure for TypeScript Starter
+
