@@ -1,20 +1,10 @@
-import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Preview,
-  Text,
-} from "@react-email/components";
+import { Body, Container, Head, Heading, Html, Preview, Text } from "@react-email/components";
 
 interface SubscriptionCanceledProps {
   endDate: Date;
 }
 
-export function SubscriptionCanceledEmail({
-  endDate,
-}: SubscriptionCanceledProps) {
+export function SubscriptionCanceledEmail({ endDate }: SubscriptionCanceledProps) {
   return (
     <Html>
       <Head />
@@ -60,4 +50,3 @@ const text = {
   fontSize: "16px",
   lineHeight: "26px",
 };
-

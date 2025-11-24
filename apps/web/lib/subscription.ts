@@ -1,4 +1,4 @@
-import type { subscriptions, products } from "@/server/db/schema";
+import type { products, subscriptions } from "@/server/db/schema";
 
 const FREE_FEATURES = ["basic_todos", "basic_support"] as const;
 const PRO_FEATURES = [
@@ -12,9 +12,9 @@ const PRO_FEATURES = [
 type Feature = (typeof FREE_FEATURES)[number] | (typeof PRO_FEATURES)[number];
 
 export function hasFeature(
-  subscription: (typeof subscriptions.$inferSelect) | null,
-  _product: (typeof products.$inferSelect) | null,
-  feature: Feature,
+  subscription: typeof subscriptions.$inferSelect | null,
+  _product: typeof products.$inferSelect | null,
+  feature: Feature
 ): boolean {
   // Free tier features
   if (FREE_FEATURES.includes(feature as (typeof FREE_FEATURES)[number])) {
@@ -34,9 +34,9 @@ export function hasFeature(
 }
 
 export function canCreateTodo(
-  subscription: (typeof subscriptions.$inferSelect) | null,
-  product: (typeof products.$inferSelect) | null,
-  currentTodoCount: number,
+  subscription: typeof subscriptions.$inferSelect | null,
+  product: typeof products.$inferSelect | null,
+  currentTodoCount: number
 ): boolean {
   if (hasFeature(subscription, product, "unlimited_todos")) {
     return true;
@@ -44,4 +44,3 @@ export function canCreateTodo(
 
   return currentTodoCount < 10;
 }
-

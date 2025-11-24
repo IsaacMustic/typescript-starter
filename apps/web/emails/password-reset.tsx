@@ -1,13 +1,4 @@
-import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
-} from "@react-email/components";
+import { Body, Container, Head, Heading, Html, Link, Preview, Text } from "@react-email/components";
 
 interface PasswordResetProps {
   resetUrl: string;
@@ -22,15 +13,13 @@ export function PasswordResetEmail({ resetUrl }: PasswordResetProps) {
         <Container style={container}>
           <Heading style={h1}>Reset your password</Heading>
           <Text style={text}>
-            Click the link below to reset your password. This link will expire
-            in 1 hour.
+            Click the link below to reset your password. This link will expire in 1 hour.
           </Text>
           <Link href={resetUrl} style={link}>
             Reset Password
           </Link>
           <Text style={text}>
-            If you didn't request a password reset, you can safely ignore this
-            email.
+            If you didn't request a password reset, you can safely ignore this email.
           </Text>
         </Container>
       </Body>
@@ -69,4 +58,3 @@ const link = {
   fontSize: "16px",
   textDecoration: "underline",
 };
-

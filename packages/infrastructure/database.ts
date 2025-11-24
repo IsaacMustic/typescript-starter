@@ -1,5 +1,5 @@
 import * as aws from "@pulumi/aws";
-import { tags, environment } from "./config";
+import { environment, tags } from "./config";
 import { dbSubnet1, dbSubnet2, rdsSecurityGroup } from "./network";
 
 // DB Subnet Group
@@ -38,6 +38,5 @@ export const dbInstance = new aws.rds.Instance("main", {
 
 export const dbEndpoint = dbInstance.endpoint;
 export const dbConnectionString = dbInstance.endpoint.apply(
-  (endpoint) => `postgresql://postgres:changeme@${endpoint}/appdb`,
+  (endpoint) => `postgresql://postgres:changeme@${endpoint}/appdb`
 );
-

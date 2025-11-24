@@ -195,4 +195,3 @@ export const rdsSecurityGroup = new aws.ec2.SecurityGroup("rds", {
   ],
   tags: { ...tags, Name: "rds-sg" },
 });
-

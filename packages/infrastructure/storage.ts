@@ -25,4 +25,3 @@ new aws.s3.BucketServerSideEncryptionConfigurationV2("static-assets-encryption",
     },
   ],
 });
-

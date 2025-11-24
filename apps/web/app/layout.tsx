@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { TRPCProvider } from "@/lib/trpc-provider";
+import { ErrorBoundary } from "@/components/error-boundary";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { TRPCProvider } from "@/lib/trpc-provider";
 
 export const metadata: Metadata = {
   title: "TypeScript Starter",
@@ -17,10 +19,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <TRPCProvider>{children}</TRPCProvider>
+          <ErrorBoundary>
+            <TRPCProvider>{children}</TRPCProvider>
+            <Toaster />
+          </ErrorBoundary>
         </ThemeProvider>
       </body>
     </html>
   );
 }
-

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
-import { trpc } from "@/lib/trpc";
+import { useState } from "react";
 import { env } from "@/env";
+import { trpc } from "@/lib/trpc";
 
 export function TRPCProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -15,7 +15,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
             staleTime: 5 * 1000,
           },
         },
-      }),
+      })
   );
 
   const [trpcClient] = useState(() =>
@@ -25,7 +25,7 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
           url: `${env.NEXT_PUBLIC_APP_URL}/api/trpc`,
         }),
       ],
-    }),
+    })
   );
 
   return (
@@ -34,4 +34,3 @@ export function TRPCProvider({ children }: { children: React.ReactNode }) {
     </trpc.Provider>
   );
 }
-

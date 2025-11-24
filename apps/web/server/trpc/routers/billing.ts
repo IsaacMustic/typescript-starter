@@ -1,21 +1,19 @@
-import { router, publicProcedure } from "../init";
-import { isAuthenticated } from "../middleware/auth";
-import { z } from "zod";
 import { TRPCError } from "@trpc/server";
-import { stripe } from "@/lib/stripe";
-import { db } from "@/lib/db";
-import {
-  subscriptions,
-  invoices,
-  products,
-  users,
-  todos,
-} from "@/server/db/schema";
-import { eq, count } from "drizzle-orm";
-import { createOrGetStripeCustomer } from "@/server/services/stripe";
+import { count, eq } from "drizzle-orm";
+import { z } from "zod";
 import { env } from "@/env";
+import { db } from "@/lib/db";
+import { stripe } from "@/lib/stripe";
+import { invoices, products, subscriptions, todos, users } from "@/server/db/schema";
+import { createOrGetStripeCustomer } from "@/server/services/stripe";
+import { publicProcedure, router } from "../init";
+import { isAuthenticated } from "../middleware/auth";
+import { logging } from "../middleware/logging";
+import { rateLimit } from "../middleware/rate-limit";
 
-const protectedProcedure = publicProcedure.use(isAuthenticated);
+const protectedProcedure = publicProcedure.use(isAuthenticated).use(rateLimit).use(logging);
+
+const publicWithMiddleware = publicProcedure.use(rateLimit).use(logging);
 
 export const billingRouter = router({
   getSubscription: protectedProcedure.query(async ({ ctx }) => {
@@ -33,7 +31,7 @@ export const billingRouter = router({
     return subscription;
   }),
 
-  getPlans: publicProcedure.query(async () => {
+  getPlans: publicWithMiddleware.query(async () => {
     const plans = await db.query.products.findMany({
       where: eq(products.active, true),
       orderBy: [products.price],
@@ -46,7 +44,7 @@ export const billingRouter = router({
     .input(
       z.object({
         priceId: z.string(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       if (!stripe) {
@@ -74,10 +72,7 @@ export const billingRouter = router({
         });
       }
 
-      const customerId = await createOrGetStripeCustomer(
-        user.id,
-        user.email,
-      );
+      const customerId = await createOrGetStripeCustomer(user.id, user.email);
 
       const session = await stripe.checkout.sessions.create({
         customer: customerId,

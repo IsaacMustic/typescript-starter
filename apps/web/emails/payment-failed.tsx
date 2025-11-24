@@ -1,13 +1,4 @@
-import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
-} from "@react-email/components";
+import { Body, Container, Head, Heading, Html, Link, Preview, Text } from "@react-email/components";
 
 interface PaymentFailedProps {
   retryUrl: string;
@@ -22,8 +13,8 @@ export function PaymentFailedEmail({ retryUrl }: PaymentFailedProps) {
         <Container style={container}>
           <Heading style={h1}>Payment Failed</Heading>
           <Text style={text}>
-            We were unable to process your payment. Please update your payment
-            method to continue your subscription.
+            We were unable to process your payment. Please update your payment method to continue
+            your subscription.
           </Text>
           <Link href={retryUrl} style={link}>
             Update Payment Method
@@ -65,4 +56,3 @@ const link = {
   fontSize: "16px",
   textDecoration: "underline",
 };
-

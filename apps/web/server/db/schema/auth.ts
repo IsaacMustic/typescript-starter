@@ -1,11 +1,4 @@
-import {
-  pgTable,
-  uuid,
-  text,
-  timestamp,
-  index,
-  unique,
-} from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 
 export const users = pgTable(
   "users",
@@ -16,19 +9,13 @@ export const users = pgTable(
     name: text("name"),
     image: text("image"),
     stripeCustomerId: text("stripe_customer_id").unique(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   },
   (table) => ({
     emailIdx: index("users_email_idx").on(table.email),
-    stripeCustomerIdIdx: index("users_stripe_customer_id_idx").on(
-      table.stripeCustomerId,
-    ),
-  }),
+    stripeCustomerIdIdx: index("users_stripe_customer_id_idx").on(table.stripeCustomerId),
+  })
 );
 
 export const sessions = pgTable(
@@ -45,7 +32,7 @@ export const sessions = pgTable(
   (table) => ({
     userIdIdx: index("sessions_user_id_idx").on(table.userId),
     expiresAtIdx: index("sessions_expires_at_idx").on(table.expiresAt),
-  }),
+  })
 );
 
 export const accounts = pgTable(
@@ -65,9 +52,9 @@ export const accounts = pgTable(
     userIdIdx: index("accounts_user_id_idx").on(table.userId),
     providerAccountUnique: unique("accounts_provider_provider_account_id_unique").on(
       table.provider,
-      table.providerAccountId,
+      table.providerAccountId
     ),
-  }),
+  })
 );
 
 export const verificationTokens = pgTable(
@@ -80,8 +67,7 @@ export const verificationTokens = pgTable(
   (table) => ({
     identifierTokenUnique: unique("verification_tokens_identifier_token_unique").on(
       table.identifier,
-      table.token,
+      table.token
     ),
-  }),
+  })
 );
-

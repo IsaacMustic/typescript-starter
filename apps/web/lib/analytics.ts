@@ -1,8 +1,8 @@
 "use client";
 
 import posthog from "posthog-js";
-import { env } from "@/env";
 import { useEffect } from "react";
+import { env } from "@/env";
 
 export function initAnalytics() {
   if (
@@ -38,4 +38,3 @@ export function identifyUser(userId: string, properties?: Record<string, unknown
     posthog.identify(userId, properties);
   }
 }
-

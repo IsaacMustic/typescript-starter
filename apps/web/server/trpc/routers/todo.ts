@@ -1,11 +1,13 @@
-import { router, publicProcedure } from "../init";
-import { isAuthenticated } from "../middleware/auth";
+import { TRPCError } from "@trpc/server";
+import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { todos } from "@/server/db/schema";
-import { eq, and, desc } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
+import { publicProcedure, router } from "../init";
+import { isAuthenticated } from "../middleware/auth";
+import { logging } from "../middleware/logging";
+import { rateLimit } from "../middleware/rate-limit";
 
-const protectedProcedure = publicProcedure.use(isAuthenticated);
+const protectedProcedure = publicProcedure.use(isAuthenticated).use(rateLimit).use(logging);
 
 export const todoRouter = router({
   getAll: protectedProcedure
@@ -14,7 +16,7 @@ export const todoRouter = router({
         limit: z.number().min(1).max(100).default(50),
         offset: z.number().min(0).default(0),
         completed: z.boolean().optional(),
-      }),
+      })
     )
     .query(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -78,7 +80,7 @@ export const todoRouter = router({
       z.object({
         title: z.string().min(1).max(255),
         description: z.string().optional(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -106,7 +108,7 @@ export const todoRouter = router({
         id: z.string().uuid(),
         title: z.string().min(1).max(255).optional(),
         description: z.string().optional(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -147,9 +149,7 @@ export const todoRouter = router({
         });
       }
 
-      await ctx.db
-        .delete(todos)
-        .where(and(eq(todos.id, input.id), eq(todos.userId, ctx.user.id)));
+      await ctx.db.delete(todos).where(and(eq(todos.id, input.id), eq(todos.userId, ctx.user.id)));
 
       return { success: true };
     }),
@@ -195,11 +195,8 @@ export const todoRouter = router({
       });
     }
 
-    await ctx.db
-      .delete(todos)
-      .where(and(eq(todos.userId, ctx.user.id), eq(todos.completed, true)));
+    await ctx.db.delete(todos).where(and(eq(todos.userId, ctx.user.id), eq(todos.completed, true)));
 
     return { success: true };
   }),
 });
-

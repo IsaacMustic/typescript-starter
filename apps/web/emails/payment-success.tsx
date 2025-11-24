@@ -1,13 +1,4 @@
-import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
-} from "@react-email/components";
+import { Body, Container, Head, Heading, Html, Link, Preview, Text } from "@react-email/components";
 
 interface PaymentSuccessProps {
   amount: number;
@@ -15,11 +6,7 @@ interface PaymentSuccessProps {
   invoiceUrl?: string;
 }
 
-export function PaymentSuccessEmail({
-  amount,
-  currency,
-  invoiceUrl,
-}: PaymentSuccessProps) {
+export function PaymentSuccessEmail({ amount, currency, invoiceUrl }: PaymentSuccessProps) {
   return (
     <Html>
       <Head />
@@ -28,8 +15,7 @@ export function PaymentSuccessEmail({
         <Container style={container}>
           <Heading style={h1}>Payment Successful</Heading>
           <Text style={text}>
-            Thank you for your payment of ${(amount / 100).toFixed(2)}{" "}
-            {currency.toUpperCase()}.
+            Thank you for your payment of ${(amount / 100).toFixed(2)} {currency.toUpperCase()}.
           </Text>
           {invoiceUrl && (
             <Link href={invoiceUrl} style={link}>
@@ -73,4 +59,3 @@ const link = {
   fontSize: "16px",
   textDecoration: "underline",
 };
-

@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const publicRoutes = ["/", "/login", "/signup", "/pricing", "/about"];
 const authRoutes = ["/login", "/signup", "/forgot-password", "/reset-password", "/verify-email"];
@@ -37,4 +37,3 @@ export const config = {
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };
-

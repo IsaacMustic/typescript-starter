@@ -39,11 +39,7 @@ async function seed() {
       description: "Pro tier with annual billing",
       price: 19999,
       interval: "year",
-      features: [
-        "All Pro features",
-        "2 months free",
-        "Annual invoicing",
-      ],
+      features: ["All Pro features", "2 months free", "Annual invoicing"],
       active: true,
     },
   ]);
@@ -59,4 +55,3 @@ seed()
   .finally(() => {
     process.exit(0);
   });
-

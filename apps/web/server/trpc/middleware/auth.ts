@@ -16,4 +16,3 @@ export const isAuthenticated = middleware(async ({ ctx, next }) => {
     },
   });
 });
-

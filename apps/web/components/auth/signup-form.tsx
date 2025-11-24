@@ -1,11 +1,11 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { authClient } from "@/lib/auth-client";
 
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -44,7 +44,7 @@ export function SignupForm() {
       } else {
         router.push("/verify-email");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
@@ -54,9 +54,7 @@ export function SignupForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {error && (
-        <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md">
-          {error}
-        </div>
+        <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md">{error}</div>
       )}
 
       <div className="space-y-2">
@@ -70,9 +68,7 @@ export function SignupForm() {
           className="w-full px-3 py-2 border rounded-md"
           disabled={isLoading}
         />
-        {errors.name && (
-          <p className="text-sm text-destructive">{errors.name.message}</p>
-        )}
+        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -86,9 +82,7 @@ export function SignupForm() {
           className="w-full px-3 py-2 border rounded-md"
           disabled={isLoading}
         />
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -102,9 +96,7 @@ export function SignupForm() {
           className="w-full px-3 py-2 border rounded-md"
           disabled={isLoading}
         />
-        {errors.password && (
-          <p className="text-sm text-destructive">{errors.password.message}</p>
-        )}
+        {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
       </div>
 
       <button
@@ -117,4 +109,3 @@ export function SignupForm() {
     </form>
   );
 }
-

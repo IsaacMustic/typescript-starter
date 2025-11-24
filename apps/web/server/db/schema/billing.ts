@@ -1,13 +1,13 @@
 import {
-  pgTable,
-  uuid,
-  text,
-  timestamp,
-  integer,
   boolean,
   index,
-  pgEnum,
+  integer,
   jsonb,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
 } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 
@@ -28,10 +28,7 @@ export const invoiceStatusEnum = pgEnum("invoice_status", [
   "void",
 ]);
 
-export const subscriptionIntervalEnum = pgEnum("subscription_interval", [
-  "month",
-  "year",
-]);
+export const subscriptionIntervalEnum = pgEnum("subscription_interval", ["month", "year"]);
 
 export const subscriptions = pgTable(
   "subscriptions",
@@ -48,20 +45,16 @@ export const subscriptions = pgTable(
     }).notNull(),
     status: subscriptionStatusEnum("status").notNull(),
     cancelAtPeriodEnd: boolean("cancel_at_period_end").notNull().default(false),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({
     userIdIdx: index("subscriptions_user_id_idx").on(table.userId),
     stripeSubscriptionIdIdx: index("subscriptions_stripe_subscription_id_idx").on(
-      table.stripeSubscriptionId,
+      table.stripeSubscriptionId
     ),
     statusIdx: index("subscriptions_status_idx").on(table.status),
-  }),
+  })
 );
 
 export const invoices = pgTable(
@@ -77,17 +70,13 @@ export const invoices = pgTable(
     status: invoiceStatusEnum("status").notNull(),
     hostedInvoiceUrl: text("hosted_invoice_url"),
     invoicePdf: text("invoice_pdf"),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({
     userIdIdx: index("invoices_user_id_idx").on(table.userId),
-    stripeInvoiceIdIdx: index("invoices_stripe_invoice_id_idx").on(
-      table.stripeInvoiceId,
-    ),
+    stripeInvoiceIdIdx: index("invoices_stripe_invoice_id_idx").on(table.stripeInvoiceId),
     statusIdx: index("invoices_status_idx").on(table.status),
-  }),
+  })
 );
 
 export const products = pgTable(
@@ -102,18 +91,11 @@ export const products = pgTable(
     interval: subscriptionIntervalEnum("interval").notNull(),
     features: jsonb("features").$type<string[]>(),
     active: boolean("active").notNull().default(true),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({
-    stripePriceIdIdx: index("products_stripe_price_id_idx").on(
-      table.stripePriceId,
-    ),
+    stripePriceIdIdx: index("products_stripe_price_id_idx").on(table.stripePriceId),
     activeIdx: index("products_active_idx").on(table.active),
-  }),
+  })
 );
-

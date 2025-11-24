@@ -4,12 +4,10 @@ export default function MarketingPage() {
   return (
     <div className="container py-24">
       <section className="text-center space-y-8 mb-24">
-        <h1 className="text-5xl font-bold tracking-tight">
-          Build Your Next SaaS Application
-        </h1>
+        <h1 className="text-5xl font-bold tracking-tight">Build Your Next SaaS Application</h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          A production-ready full-stack TypeScript starter template with
-          authentication, payments, and infrastructure.
+          A production-ready full-stack TypeScript starter template with authentication, payments,
+          and infrastructure.
         </p>
         <div className="flex gap-4 justify-center">
           <Link
@@ -18,10 +16,7 @@ export default function MarketingPage() {
           >
             Get Started
           </Link>
-          <Link
-            href="/pricing"
-            className="border border-input px-8 py-3 rounded-md font-medium"
-          >
+          <Link href="/pricing" className="border border-input px-8 py-3 rounded-md font-medium">
             View Pricing
           </Link>
         </div>
@@ -31,22 +26,19 @@ export default function MarketingPage() {
         <div className="p-6 border rounded-lg">
           <h3 className="text-xl font-semibold mb-2">Type-Safe</h3>
           <p className="text-muted-foreground">
-            End-to-end type safety from database to frontend with TypeScript
-            and tRPC.
+            End-to-end type safety from database to frontend with TypeScript and tRPC.
           </p>
         </div>
         <div className="p-6 border rounded-lg">
           <h3 className="text-xl font-semibold mb-2">Production Ready</h3>
           <p className="text-muted-foreground">
-            Complete infrastructure setup with AWS, monitoring, and CI/CD
-            pipeline.
+            Complete infrastructure setup with AWS, monitoring, and CI/CD pipeline.
           </p>
         </div>
         <div className="p-6 border rounded-lg">
           <h3 className="text-xl font-semibold mb-2">Modern Stack</h3>
           <p className="text-muted-foreground">
-            Next.js 16, React 19, Drizzle ORM, Better Auth, and Stripe
-            integration.
+            Next.js 16, React 19, Drizzle ORM, Better Auth, and Stripe integration.
           </p>
         </div>
       </section>
@@ -108,4 +100,3 @@ export default function MarketingPage() {
     </div>
   );
 }
-

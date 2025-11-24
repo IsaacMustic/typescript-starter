@@ -16,4 +16,3 @@ export const stripeSecret = new aws.secretsmanager.Secret("stripe", {
   description: "Stripe API keys",
   tags: { ...tags, Name: "stripe-secret" },
 });
-

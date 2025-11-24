@@ -1,13 +1,10 @@
-import { stripe } from "@/lib/stripe";
-import { db } from "@/lib/db";
-import { users, subscriptions, invoices } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
+import { db } from "@/lib/db";
+import { stripe } from "@/lib/stripe";
+import { invoices, subscriptions, users } from "@/server/db/schema";
 
-export async function createOrGetStripeCustomer(
-  userId: string,
-  email: string,
-): Promise<string> {
+export async function createOrGetStripeCustomer(userId: string, email: string): Promise<string> {
   if (!stripe) {
     throw new Error("Stripe is not configured");
   }
@@ -27,30 +24,20 @@ export async function createOrGetStripeCustomer(
     },
   });
 
-  await db
-    .update(users)
-    .set({ stripeCustomerId: customer.id })
-    .where(eq(users.id, userId));
+  await db.update(users).set({ stripeCustomerId: customer.id }).where(eq(users.id, userId));
 
   return customer.id;
 }
 
-export async function handleCheckoutSessionCompleted(
-  session: Stripe.Checkout.Session,
-) {
+export async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   if (!session.customer || !session.subscription) {
     return;
   }
 
-  const customerId =
-    typeof session.customer === "string"
-      ? session.customer
-      : session.customer.id;
+  const customerId = typeof session.customer === "string" ? session.customer : session.customer.id;
 
   const subscriptionId =
-    typeof session.subscription === "string"
-      ? session.subscription
-      : session.subscription.id;
+    typeof session.subscription === "string" ? session.subscription : session.subscription.id;
 
   const user = await db.query.users.findFirst({
     where: eq(users.stripeCustomerId, customerId),
@@ -82,9 +69,7 @@ export async function handleCheckoutSessionCompleted(
   });
 }
 
-export async function handleSubscriptionUpdated(
-  subscription: Stripe.Subscription,
-) {
+export async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const user = await db.query.users.findFirst({
     where: eq(users.stripeCustomerId, subscription.customer as string),
   });
@@ -111,9 +96,7 @@ export async function handleSubscriptionUpdated(
     .where(eq(subscriptions.stripeSubscriptionId, subscription.id));
 }
 
-export async function handleSubscriptionDeleted(
-  subscription: Stripe.Subscription,
-) {
+export async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   await db
     .update(subscriptions)
     .set({
@@ -123,9 +106,7 @@ export async function handleSubscriptionDeleted(
     .where(eq(subscriptions.stripeSubscriptionId, subscription.id));
 }
 
-export async function handleInvoicePaymentSucceeded(
-  invoice: Stripe.Invoice,
-) {
+export async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   const user = await db.query.users.findFirst({
     where: eq(users.stripeCustomerId, invoice.customer as string),
   });
@@ -145,9 +126,7 @@ export async function handleInvoicePaymentSucceeded(
   });
 }
 
-export async function handleInvoicePaymentFailed(
-  invoice: Stripe.Invoice,
-) {
+export async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   const user = await db.query.users.findFirst({
     where: eq(users.stripeCustomerId, invoice.customer as string),
   });
@@ -164,4 +143,3 @@ export async function handleInvoicePaymentFailed(
     })
     .where(eq(users.id, user.id));
 }
-

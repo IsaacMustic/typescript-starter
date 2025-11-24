@@ -1,6 +1,5 @@
-import { initTRPC } from "@trpc/server";
-import { createContext, type Context } from "./context";
-import { TRPCError } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
+import { type Context, createContext } from "./context";
 
 const t = initTRPC.context<Context>().create({
   errorFormatter({ shape, error }) {
@@ -20,4 +19,3 @@ export const publicProcedure = t.procedure;
 export const middleware = t.middleware;
 
 export { createContext };
-

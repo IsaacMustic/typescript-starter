@@ -7,13 +7,10 @@ export default function ProfilePage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">Profile</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage your account settings and preferences
-        </p>
+        <p className="text-muted-foreground mt-2">Manage your account settings and preferences</p>
       </div>
 
       <ProfileForm />
     </div>
   );
 }
-

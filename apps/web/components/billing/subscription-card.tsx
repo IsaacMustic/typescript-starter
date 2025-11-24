@@ -1,7 +1,7 @@
 "use client";
 
-import { trpc } from "@/lib/trpc";
 import Link from "next/link";
+import { trpc } from "@/lib/trpc";
 
 export function SubscriptionCard() {
   const { data: subscription, isLoading } = trpc.billing.getSubscription.useQuery();
@@ -14,9 +14,7 @@ export function SubscriptionCard() {
     return (
       <div className="p-6 border rounded-lg space-y-4">
         <h3 className="text-xl font-semibold">No Active Subscription</h3>
-        <p className="text-muted-foreground">
-          You are currently on the free plan.
-        </p>
+        <p className="text-muted-foreground">You are currently on the free plan.</p>
         <Link
           href="/dashboard/billing/plans"
           className="inline-block bg-primary text-primary-foreground px-4 py-2 rounded-md"
@@ -42,9 +40,7 @@ export function SubscriptionCard() {
       </div>
       {subscription.cancelAtPeriodEnd && (
         <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-md">
-          <p className="text-sm">
-            Your subscription will cancel at the end of the billing period.
-          </p>
+          <p className="text-sm">Your subscription will cancel at the end of the billing period.</p>
         </div>
       )}
       <Link
@@ -56,4 +52,3 @@ export function SubscriptionCard() {
     </div>
   );
 }
-

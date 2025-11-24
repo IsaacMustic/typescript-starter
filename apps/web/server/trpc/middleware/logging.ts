@@ -1,5 +1,5 @@
-import { middleware } from "../init";
 import { logger } from "@/lib/logger";
+import { middleware } from "../init";
 
 export const logging = middleware(async ({ ctx, next, path, type, input }) => {
   const start = Date.now();
@@ -25,4 +25,3 @@ export const logging = middleware(async ({ ctx, next, path, type, input }) => {
 
   return result;
 });
-

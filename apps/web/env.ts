@@ -1,3 +1,13 @@
+// Load .env.local when not running in Next.js (e.g., drizzle-kit, seed scripts)
+// Next.js automatically loads .env files, but standalone scripts don't
+if (!process.env.NEXT_RUNTIME) {
+  try {
+    require("dotenv").config({ path: require("path").resolve(process.cwd(), ".env.local") });
+  } catch {
+    // dotenv not available or .env.local doesn't exist - that's okay
+  }
+}
+
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
@@ -64,4 +74,3 @@ export const env = createEnv({
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
-

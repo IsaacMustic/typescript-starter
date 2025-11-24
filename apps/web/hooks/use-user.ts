@@ -9,4 +9,3 @@ export function useUser() {
     isLoading: !session,
   };
 }
-

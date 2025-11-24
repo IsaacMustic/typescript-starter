@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("API Routes", () => {
   it("should have health check endpoint", async () => {
@@ -6,4 +6,3 @@ describe("API Routes", () => {
     expect(response.status).toBe(200);
   });
 });
-

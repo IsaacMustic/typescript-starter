@@ -21,4 +21,3 @@ export const ecsCpuAlarm = new aws.cloudwatch.MetricAlarm("ecs-cpu-high", {
   alarmDescription: "Alert when ECS CPU exceeds 80%",
   tags: { ...tags, Name: "ecs-cpu-alarm" },
 });
-

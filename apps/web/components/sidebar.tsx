@@ -22,9 +22,7 @@ export function Sidebar() {
             key={item.href}
             href={item.href}
             className={`block px-4 py-2 rounded-md ${
-              pathname === item.href
-                ? "bg-primary text-primary-foreground"
-                : "hover:bg-muted"
+              pathname === item.href ? "bg-primary text-primary-foreground" : "hover:bg-muted"
             }`}
           >
             {item.label}
@@ -34,4 +32,3 @@ export function Sidebar() {
     </aside>
   );
 }
-

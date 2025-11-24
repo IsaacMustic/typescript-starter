@@ -1,6 +1,6 @@
 import * as aws from "@pulumi/aws";
-import { tags, environment } from "./config";
-import { publicSubnet1, publicSubnet2, ecsSecurityGroup, albSecurityGroup } from "./network";
+import { environment, tags } from "./config";
+import { albSecurityGroup, ecsSecurityGroup, publicSubnet1, publicSubnet2 } from "./network";
 
 // ECR Repository
 export const ecrRepository = new aws.ecr.Repository("app", {
@@ -107,4 +107,3 @@ export const ecsService = new aws.ecs.Service("app", {
   ],
   tags: { ...tags, Name: "app-service" },
 });
-

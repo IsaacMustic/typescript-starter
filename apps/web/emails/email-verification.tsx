@@ -1,21 +1,10 @@
-import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
-} from "@react-email/components";
+import { Body, Container, Head, Heading, Html, Link, Preview, Text } from "@react-email/components";
 
 interface EmailVerificationProps {
   verificationUrl: string;
 }
 
-export function EmailVerificationEmail({
-  verificationUrl,
-}: EmailVerificationProps) {
+export function EmailVerificationEmail({ verificationUrl }: EmailVerificationProps) {
   return (
     <Html>
       <Head />
@@ -23,9 +12,7 @@ export function EmailVerificationEmail({
       <Body style={main}>
         <Container style={container}>
           <Heading style={h1}>Verify your email</Heading>
-          <Text style={text}>
-            Please click the link below to verify your email address.
-          </Text>
+          <Text style={text}>Please click the link below to verify your email address.</Text>
           <Link href={verificationUrl} style={link}>
             Verify Email
           </Link>
@@ -69,4 +56,3 @@ const link = {
   fontSize: "16px",
   textDecoration: "underline",
 };
-

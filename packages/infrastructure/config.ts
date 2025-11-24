@@ -11,4 +11,3 @@ export const tags = {
   Project: "typescript-starter",
   ManagedBy: "pulumi",
 };
-

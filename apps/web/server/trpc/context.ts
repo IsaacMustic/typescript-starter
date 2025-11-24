@@ -1,6 +1,6 @@
-import { getServerSession } from "@/server/auth";
-import { db } from "@/lib/db";
 import type { Session } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { getServerSession } from "@/server/auth";
 
 export interface Context {
   db: typeof db;
@@ -17,4 +17,3 @@ export async function createContext(): Promise<Context> {
     user: session?.user ?? null,
   };
 }
-

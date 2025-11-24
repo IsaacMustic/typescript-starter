@@ -1,5 +1,4 @@
 import * as aws from "@pulumi/aws";
-import { tags } from "./config";
 
 // SES Configuration Set
 export const sesConfigurationSet = new aws.ses.ConfigurationSet("main", {
@@ -8,4 +7,3 @@ export const sesConfigurationSet = new aws.ses.ConfigurationSet("main", {
 
 // Note: Domain verification and DKIM setup would be done manually
 // or through additional resources
-

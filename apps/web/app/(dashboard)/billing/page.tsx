@@ -1,7 +1,7 @@
 "use client";
 
-import { SubscriptionCard } from "@/components/billing/subscription-card";
 import { InvoiceList } from "@/components/billing/invoice-list";
+import { SubscriptionCard } from "@/components/billing/subscription-card";
 
 export default function BillingPage() {
   return (
@@ -21,4 +21,3 @@ export default function BillingPage() {
     </div>
   );
 }
-

@@ -1,11 +1,13 @@
-import { router, publicProcedure } from "../init";
-import { isAuthenticated } from "../middleware/auth";
+import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { users } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
+import { publicProcedure, router } from "../init";
+import { isAuthenticated } from "../middleware/auth";
+import { logging } from "../middleware/logging";
+import { rateLimit } from "../middleware/rate-limit";
 
-const protectedProcedure = publicProcedure.use(isAuthenticated);
+const protectedProcedure = publicProcedure.use(isAuthenticated).use(rateLimit).use(logging);
 
 export const userRouter = router({
   getProfile: protectedProcedure.query(async ({ ctx }) => {
@@ -35,7 +37,7 @@ export const userRouter = router({
       z.object({
         name: z.string().min(2).optional(),
         image: z.string().url().optional(),
-      }),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {
@@ -61,9 +63,9 @@ export const userRouter = router({
     .input(
       z.object({
         email: z.string().email(),
-      }),
+      })
     )
-    .mutation(async ({ ctx }) => {
+    .mutation(async ({ ctx, input }) => {
       if (!ctx.user) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
@@ -71,12 +73,38 @@ export const userRouter = router({
         });
       }
 
-      // Email change should be handled by Better Auth
-      // This is a placeholder
-      throw new TRPCError({
-        code: "NOT_IMPLEMENTED",
-        message: "Email change not yet implemented",
+      // Check if email is already in use
+      const existingUser = await ctx.db.query.users.findFirst({
+        where: eq(users.email, input.email),
       });
+
+      if (existingUser && existingUser.id !== ctx.user.id) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Email is already in use",
+        });
+      }
+
+      // For now, update email directly
+      // In production, you would:
+      // 1. Generate a verification token
+      // 2. Store it in a verification table
+      // 3. Send verification email
+      // 4. Update email only after verification
+      const [updatedUser] = await ctx.db
+        .update(users)
+        .set({
+          email: input.email,
+          emailVerified: null, // Require re-verification
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, ctx.user.id))
+        .returning();
+
+      // Note: In a full implementation, you would send a verification email here
+      // using sendVerificationEmail from the email service
+
+      return updatedUser;
     }),
 
   deleteAccount: protectedProcedure.mutation(async ({ ctx }) => {
@@ -92,4 +120,3 @@ export const userRouter = router({
     return { success: true };
   }),
 });
-

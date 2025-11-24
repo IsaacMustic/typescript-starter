@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import { boolean, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 
 export const todos = pgTable(
@@ -11,19 +11,11 @@ export const todos = pgTable(
     title: text("title").notNull(),
     description: text("description"),
     completed: boolean("completed").notNull().default(false),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({
     userIdIdx: index("todos_user_id_idx").on(table.userId),
-    userIdCompletedIdx: index("todos_user_id_completed_idx").on(
-      table.userId,
-      table.completed,
-    ),
-  }),
+    userIdCompletedIdx: index("todos_user_id_completed_idx").on(table.userId, table.completed),
+  })
 );
-
