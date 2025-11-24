@@ -19,7 +19,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true
   },
-  "files": [],
   "exclude": ["node_modules", ".next", "dist", "build", ".turbo", "apps", "packages"]
 }
 

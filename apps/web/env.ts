@@ -2,7 +2,7 @@
 // Next.js automatically loads .env files, but standalone scripts don't
 if (!process.env.NEXT_RUNTIME) {
   try {
-    require("dotenv").config({ path: require("path").resolve(process.cwd(), ".env.local") });
+    require("dotenv").config({ path: require("node:path").resolve(process.cwd(), ".env.local") });
   } catch {
     // dotenv not available or .env.local doesn't exist - that's okay
   }

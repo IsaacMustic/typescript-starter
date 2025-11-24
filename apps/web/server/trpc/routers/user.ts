@@ -95,7 +95,7 @@ export const userRouter = router({
         .update(users)
         .set({
           email: input.email,
-          emailVerified: null, // Require re-verification
+          emailVerified: false, // Require re-verification
           updatedAt: new Date(),
         })
         .where(eq(users.id, ctx.user.id))

@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { env } from "@/env";
@@ -33,6 +34,11 @@ export const auth = betterAuth({
             clientSecret: env.GITHUB_CLIENT_SECRET,
           }
         : undefined,
+  },
+  advanced: {
+    database: {
+      generateId: () => randomUUID(),
+    },
   },
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,

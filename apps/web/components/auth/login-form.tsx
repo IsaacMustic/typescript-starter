@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { authClient } from "@/lib/auth-client";
 
@@ -16,7 +17,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -29,7 +29,6 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-    setError(null);
 
     try {
       const result = await authClient.signIn.email({
@@ -38,13 +37,14 @@ export function LoginForm() {
       });
 
       if (result.error) {
-        setError(result.error.message ?? "An error occurred");
+        toast.error(result.error.message ?? "An error occurred");
       } else {
+        toast.success("Logged in successfully");
         router.push("/dashboard");
         router.refresh();
       }
     } catch (_err) {
-      setError("An unexpected error occurred");
+      toast.error("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -52,10 +52,6 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {error && (
-        <div className="p-3 bg-destructive/10 text-destructive text-sm rounded-md">{error}</div>
-      )}
-
       <div className="space-y-2">
         <label htmlFor="email" className="text-sm font-medium">
           Email
@@ -66,8 +62,8 @@ export function LoginForm() {
           {...register("email")}
           className="w-full px-3 py-2 border rounded-md"
           disabled={isLoading}
+          aria-invalid={errors.email ? "true" : "false"}
         />
-        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -80,8 +76,8 @@ export function LoginForm() {
           {...register("password")}
           className="w-full px-3 py-2 border rounded-md"
           disabled={isLoading}
+          aria-invalid={errors.password ? "true" : "false"}
         />
-        {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
       </div>
 
       <button

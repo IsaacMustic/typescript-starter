@@ -1,11 +1,11 @@
-import { index, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
 
 export const users = pgTable(
   "users",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     email: text("email").notNull().unique(),
-    emailVerified: timestamp("email_verified", { withTimezone: true }),
+    emailVerified: boolean("email_verified"),
     name: text("name"),
     image: text("image"),
     stripeCustomerId: text("stripe_customer_id").unique(),
@@ -38,21 +38,32 @@ export const sessions = pgTable(
 export const accounts = pgTable(
   "accounts",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    accountId: uuid("account_id").primaryKey().defaultRandom(),
+    id: uuid("id").notNull().defaultRandom(),
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    provider: text("provider").notNull(),
-    providerAccountId: text("provider_account_id").notNull(),
+    provider: text("provider"),
+    providerId: text("provider_id").notNull(),
+    providerAccountId: text("provider_account_id"),
+    password: text("password"),
     accessToken: text("access_token"),
     refreshToken: text("refresh_token"),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   },
   (table) => ({
     userIdIdx: index("accounts_user_id_idx").on(table.userId),
-    providerAccountUnique: unique("accounts_provider_provider_account_id_unique").on(
-      table.provider,
+    // Unique constraint on providerId and providerAccountId (allows multiple nulls)
+    providerAccountUnique: unique("accounts_provider_id_provider_account_id_unique").on(
+      table.providerId,
       table.providerAccountId
+    ),
+    // Ensure one account per user per provider (prevents duplicate credential accounts)
+    userIdProviderIdUnique: unique("accounts_user_id_provider_id_unique").on(
+      table.userId,
+      table.providerId
     ),
   })
 );
