@@ -1,6 +1,8 @@
-# Implementation Plan - SSE, Blog, Sitemap, Robots, i18n
+# Implementation Plan
 
-This plan outlines the steps to add Server-Sent Events (SSE), a Blog (MDX), Sitemap, Robots.txt, and Internationalization (i18n) to the Next.js application.
+This document outlines the implementation plan for adding Server-Sent Events (SSE), Blog (MDX), Sitemap, Robots.txt, and Internationalization (i18n) to the Next.js application.
+
+> **Note:** This is a historical planning document. The features described have been implemented. See [IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md) for completion status.
 
 ## 1. Dependencies
 Install necessary packages:

@@ -1,4 +1,8 @@
-# Implementation Summary - SSE, Blog, Sitemap, Robots, i18n
+# Implementation Summary
+
+This document summarizes the implementation of Server-Sent Events (SSE), Blog (MDX), Sitemap, Robots.txt, and Internationalization (i18n) features.
+
+> **Note:** This is a historical document. For current feature documentation, see the main [README.md](../../README.md) and [API Documentation](../../docs/API.md).
 
 ## ✅ Completed Features
 

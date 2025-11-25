@@ -1,0 +1,1 @@
+ALTER TABLE "users" ALTER COLUMN "email_verified" SET DATA TYPE boolean USING CASE WHEN "email_verified" IS NULL THEN false ELSE true END;
