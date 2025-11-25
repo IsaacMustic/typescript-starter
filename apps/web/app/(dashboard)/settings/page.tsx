@@ -16,14 +16,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/lib/trpc";
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const [isDeleting, setIsDeleting] = useState(false);
   const { mutate: deleteAccount } = trpc.user.deleteAccount.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("Account deleted successfully");
+      // Sign out to clear the session cookie
+      await authClient.signOut();
       window.location.href = "/";
     },
     onError: (err: { message: string }) => {
