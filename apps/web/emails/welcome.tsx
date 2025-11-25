@@ -2,9 +2,10 @@ import { Body, Container, Head, Heading, Html, Link, Preview, Text } from "@reac
 
 interface WelcomeEmailProps {
   name: string;
+  appUrl?: string;
 }
 
-export function WelcomeEmail({ name }: WelcomeEmailProps) {
+export function WelcomeEmail({ name, appUrl = "http://localhost:3000" }: WelcomeEmailProps) {
   return (
     <Html>
       <Head />
@@ -16,7 +17,7 @@ export function WelcomeEmail({ name }: WelcomeEmailProps) {
           <Text style={text}>
             Get started by exploring the dashboard and creating your first todo.
           </Text>
-          <Link href="https://example.com/dashboard" style={link}>
+          <Link href={`${appUrl}/dashboard`} style={link}>
             Go to Dashboard
           </Link>
         </Container>

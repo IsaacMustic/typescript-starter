@@ -486,7 +486,7 @@ Contributions are welcome! Please follow these steps:
 
 ### Still Having Issues?
 
-- Check [GitHub Issues](https://github.com/your-repo/issues) for similar problems
+- Check the project's GitHub Issues for similar problems
 - Review the [Deployment Guide](./docs/DEPLOYMENT.md) for production issues
 - Ensure all prerequisites are installed correctly
 

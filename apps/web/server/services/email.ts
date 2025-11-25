@@ -179,7 +179,8 @@ async function sendEmail({
  * Non-critical - failures won't block signup
  */
 export async function sendWelcomeEmail(name: string, email: string): Promise<void> {
-  const html = await render(WelcomeEmail({ name }));
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const html = await render(WelcomeEmail({ name, appUrl }));
   await sendEmail({
     to: email,
     subject: "Welcome to TypeScript Starter!",
