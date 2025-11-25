@@ -1,39 +1,56 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import createMiddleware from "next-intl/middleware";
 
-const publicRoutes = ["/", "/login", "/signup", "/pricing", "/about", "/contact", "/terms", "/privacy"];
-const authRoutes = ["/login", "/signup", "/forgot-password", "/reset-password", "/verify-email", "/verify-email-change"];
+const intlMiddleware = createMiddleware({
+  locales: ["en"],
+  defaultLocale: "en",
+});
+
+const authRoutes = [
+  "/login",
+  "/signup",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-email",
+  "/verify-email-change",
+];
+const protectedRoutes = ["/dashboard", "/settings", "/profile"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+
+  // Extract locale from pathname
+  const localeMatch = pathname.match(/^\/(en)(\/|$)/);
+  const locale = localeMatch ? localeMatch[1] : "en";
+
+  // Remove locale from pathname for checking
+  const pathnameWithoutLocale = pathname.replace(/^\/(en)/, "") || "/";
+
+  const isAuthRoute = authRoutes.some(
+    (route) => pathnameWithoutLocale === route || pathnameWithoutLocale.startsWith(`${route}/`)
+  );
+  const isProtectedRoute = protectedRoutes.some(
+    (route) => pathnameWithoutLocale === route || pathnameWithoutLocale.startsWith(`${route}/`)
+  );
 
   // Get session from cookie
   const sessionCookie = request.cookies.get("better-auth.session_token");
 
   // If user is authenticated and trying to access auth routes, redirect to dashboard
   if (sessionCookie && isAuthRoute) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL(`/${locale}/dashboard`, request.url));
   }
 
   // If user is not authenticated and trying to access protected routes, redirect to login
-  if (!sessionCookie && !isPublicRoute && !isAuthRoute) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  // Only redirect for explicitly protected routes, not for unknown routes (let Next.js handle 404)
+  if (!sessionCookie && isProtectedRoute) {
+    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
-  return NextResponse.next();
+  return intlMiddleware(request);
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
+  matcher: ["/((?!api|_next|.*\\..*).*)"],
 };

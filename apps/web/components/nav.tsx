@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,7 +48,7 @@ export function Nav() {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link
           href="/"
           className="flex items-center gap-2 font-bold text-xl transition-smooth hover:opacity-80"
@@ -65,6 +66,7 @@ export function Nav() {
                   Dashboard
                 </Button>
               </Link>
+              <LanguageSwitcher />
               <Button
                 variant="ghost"
                 size="icon"
@@ -128,6 +130,7 @@ export function Nav() {
               <Link href="/signup">
                 <Button size="sm">Sign Up</Button>
               </Link>
+              <LanguageSwitcher />
               <Button
                 variant="ghost"
                 size="icon"
@@ -150,6 +153,7 @@ export function Nav() {
 
         {/* Mobile Navigation */}
         <div className="flex md:hidden items-center gap-2">
+          <LanguageSwitcher />
           <Button
             variant="ghost"
             size="icon"
@@ -177,6 +181,10 @@ export function Nav() {
                 <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
               <div className="mt-8 flex flex-col gap-4">
+                <div className="flex items-center justify-between pb-2 border-b">
+                  <span className="text-sm font-medium">Language</span>
+                  <LanguageSwitcher />
+                </div>
                 {user ? (
                   <>
                     <Link href="/dashboard">

@@ -1,6 +1,13 @@
 "use client";
 
-import { Activity, CheckSquare, CreditCard, LayoutDashboard, Menu, Settings, User } from "lucide-react";
+import {
+  Activity,
+  CheckSquare,
+  CreditCard,
+  LayoutDashboard,
+  Menu,
+  Settings
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -14,9 +21,8 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/todos", label: "Todos", icon: CheckSquare },
   { href: "/dashboard/usage", label: "Usage", icon: Activity },
-  { href: "/dashboard/profile", label: "Profile", icon: User },
   { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 function SidebarContent({ onLinkClick }: { onLinkClick?: () => void }) {
@@ -62,7 +68,7 @@ function SidebarContent({ onLinkClick }: { onLinkClick?: () => void }) {
       {user && (
         <div className="border-t p-4">
           <Link
-            href="/dashboard/profile"
+            href="/settings"
             onClick={onLinkClick}
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-smooth hover:bg-accent"
           >

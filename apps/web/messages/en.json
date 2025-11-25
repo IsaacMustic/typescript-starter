@@ -1,0 +1,13 @@
+{
+  "HomePage": {
+    "title": "Welcome to the TypeScript Starter",
+    "subtitle": "A powerful starter for your next project"
+  },
+  "Blog": {
+    "title": "Blog",
+    "readMore": "Read more"
+  },
+  "Common": {
+    "loading": "Loading..."
+  }
+}

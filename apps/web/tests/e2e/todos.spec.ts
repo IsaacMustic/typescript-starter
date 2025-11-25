@@ -84,7 +84,7 @@ test.describe("Todo Management", () => {
       await page.goto("/dashboard/todos");
       const url = page.url();
       if (url.includes("/login")) {
-        test.skip("Authentication required");
+        test.skip();
         return;
       }
       await expect(page.locator('input[placeholder*="Search"]')).toBeVisible();
@@ -94,7 +94,7 @@ test.describe("Todo Management", () => {
       await page.goto("/dashboard/todos");
       const url = page.url();
       if (url.includes("/login")) {
-        test.skip("Authentication required");
+        test.skip();
         return;
       }
       await expect(page.locator('button:has-text("All")')).toBeVisible();
@@ -106,7 +106,7 @@ test.describe("Todo Management", () => {
       await page.goto("/dashboard/todos");
       const url = page.url();
       if (url.includes("/login")) {
-        test.skip("Authentication required");
+        test.skip();
         return;
       }
       await expect(page.locator('button:has-text("Sort")')).toBeVisible();
@@ -117,7 +117,7 @@ test.describe("Todo Management", () => {
       // 1. Authentication setup
       // 2. Multiple todos with different statuses
       // 3. Filter interaction
-      test.skip("Requires authentication and test data setup");
+      test.skip();
     });
   });
 

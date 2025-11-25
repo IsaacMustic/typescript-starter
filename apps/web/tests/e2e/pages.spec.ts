@@ -66,4 +66,3 @@ test.describe("Auth Pages", () => {
     await expect(page.locator("text=Invalid")).toBeVisible();
   });
 });
-

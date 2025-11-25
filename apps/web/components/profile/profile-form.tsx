@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -11,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/lib/trpc";
 import { AvatarUpload } from "./avatar-upload";
 
@@ -40,10 +38,7 @@ export function ProfileForm() {
     },
   });
 
-  const {
-    mutate: changeEmail,
-    isPending: isChangingEmail,
-  } = trpc.user.changeEmail.useMutation({
+  const { mutate: changeEmail, isPending: isChangingEmail } = trpc.user.changeEmail.useMutation({
     onSuccess: () => {
       toast.success("Verification email sent. Please check your new email address.");
       emailForm.reset();
@@ -121,7 +116,9 @@ export function ProfileForm() {
                   // Update form value when avatar changes
                   const form = document.querySelector("form");
                   if (form) {
-                    const imageInput = form.querySelector('input[name="image"]') as HTMLInputElement;
+                    const imageInput = form.querySelector(
+                      'input[name="image"]'
+                    ) as HTMLInputElement;
                     if (imageInput) {
                       imageInput.value = url;
                     }
@@ -171,7 +168,9 @@ export function ProfileForm() {
       <Card>
         <CardHeader>
           <CardTitle>Email Address</CardTitle>
-          <CardDescription>Change your email address. A verification email will be sent.</CardDescription>
+          <CardDescription>
+            Change your email address. A verification email will be sent.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">

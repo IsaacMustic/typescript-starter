@@ -43,7 +43,7 @@ test.describe("Billing & Subscriptions", () => {
       await page.goto("/dashboard/billing/checkout");
       const url = page.url();
       if (url.includes("/login")) {
-        test.skip("Authentication required");
+        test.skip();
         return;
       }
       await expect(page.locator("h1, h2")).toContainText(/checkout/i);
@@ -54,13 +54,13 @@ test.describe("Billing & Subscriptions", () => {
       await page.goto("/dashboard/billing/checkout?priceId=test_price_id");
       const url = page.url();
       if (url.includes("/login")) {
-        test.skip("Authentication required");
+        test.skip();
         return;
       }
       // Should show loading or redirect
-      await expect(
-        page.locator("text=Redirecting|Creating checkout|Loading")
-      ).toBeVisible({ timeout: 5000 });
+      await expect(page.locator("text=Redirecting|Creating checkout|Loading")).toBeVisible({
+        timeout: 5000,
+      });
     });
 
     test("should create checkout session", async ({ page: _page }) => {
@@ -68,14 +68,14 @@ test.describe("Billing & Subscriptions", () => {
       // 1. Authentication setup
       // 2. Stripe mock or test mode
       // 3. Checkout session creation
-      test.skip("Requires authentication and Stripe test setup");
+      test.skip();
     });
 
     test("should redirect to Stripe Checkout", async ({ page: _page }) => {
       // This test would require:
       // 1. Authentication setup
       // 2. Stripe Checkout integration
-      test.skip("Requires authentication and Stripe test setup");
+      test.skip();
     });
   });
 
@@ -84,12 +84,12 @@ test.describe("Billing & Subscriptions", () => {
       await page.goto("/dashboard/billing/portal");
       const url = page.url();
       if (url.includes("/login")) {
-        test.skip("Authentication required");
+        test.skip();
         return;
       }
-      await expect(
-        page.locator("text=Redirecting|Creating portal|Loading")
-      ).toBeVisible({ timeout: 5000 });
+      await expect(page.locator("text=Redirecting|Creating portal|Loading")).toBeVisible({
+        timeout: 5000,
+      });
     });
   });
 

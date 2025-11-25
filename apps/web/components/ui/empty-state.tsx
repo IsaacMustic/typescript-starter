@@ -34,5 +34,3 @@ export function EmptyState({ icon: Icon, title, description, action, className }
     </Card>
   );
 }
-
-

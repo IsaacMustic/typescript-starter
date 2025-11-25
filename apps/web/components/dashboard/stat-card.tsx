@@ -68,5 +68,3 @@ export function StatCard({
     </Card>
   );
 }
-
-

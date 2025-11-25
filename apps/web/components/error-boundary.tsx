@@ -25,15 +25,23 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: { componentStack: string }) {
-    // Log to Sentry if available
-    if (typeof window !== "undefined" && Sentry.captureException) {
-      Sentry.captureException(error, {
-        contexts: {
-          react: {
-            componentStack: errorInfo.componentStack,
+    // Log to Sentry if available and configured
+    if (
+      typeof window !== "undefined" &&
+      process.env.NEXT_PUBLIC_SENTRY_DSN &&
+      Sentry.captureException
+    ) {
+      try {
+        Sentry.captureException(error, {
+          contexts: {
+            react: {
+              componentStack: errorInfo.componentStack,
+            },
           },
-        },
-      });
+        });
+      } catch {
+        // Silently fail if Sentry isn't properly initialized
+      }
     }
 
     // Also log to console in development

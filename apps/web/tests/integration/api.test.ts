@@ -4,12 +4,14 @@ import { beforeAll, describe, expect, it } from "vitest";
 async function isServerRunning(): Promise<boolean> {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
     const response = await fetch("http://localhost:3000/api/health", {
       signal: controller.signal,
     });
     clearTimeout(timeoutId);
-    return response.ok;
+    // Server is running if we get any response (not 404)
+    // 200 = healthy, 500 = unhealthy but server is running
+    return response.status !== 404;
   } catch {
     return false;
   }

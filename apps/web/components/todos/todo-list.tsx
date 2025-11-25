@@ -21,6 +21,49 @@ export function TodoList({ searchQuery = "", filter = "all", sortBy = "date" }: 
     completed: filter === "all" ? undefined : filter === "completed",
   });
 
+  // tRPC serializes Date objects as strings over JSON, but TypeScript infers Date from schema
+  // biome-ignore lint/suspicious/noExplicitAny: Type assertion needed due to tRPC serialization
+  const allTodos = (data?.todos as any as Todo[]) ?? [];
+
+  // Move useMemo before any conditional returns to follow Rules of Hooks
+  const filteredAndSortedTodos = useMemo(() => {
+    let filtered = allTodos;
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (todo) =>
+          todo.title.toLowerCase().includes(query) ||
+          todo.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Apply status filter (already done by backend, but we need to handle "all")
+    if (filter === "active") {
+      filtered = filtered.filter((todo) => !todo.completed);
+    } else if (filter === "completed") {
+      filtered = filtered.filter((todo) => todo.completed);
+    }
+
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case "title":
+          return a.title.localeCompare(b.title);
+        case "status":
+          if (a.completed === b.completed) {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          }
+          return a.completed ? 1 : -1;
+        default:
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+    });
+
+    return sorted;
+  }, [allTodos, searchQuery, filter, sortBy]);
+
   if (isLoading) {
     return (
       <div className="space-y-2">
@@ -49,50 +92,7 @@ export function TodoList({ searchQuery = "", filter = "all", sortBy = "date" }: 
     );
   }
 
-  // tRPC serializes Date objects as strings over JSON, but TypeScript infers Date from schema
-  // biome-ignore lint/suspicious/noExplicitAny: Type assertion needed due to tRPC serialization
-  const allTodos = (data?.todos as any as Todo[]) ?? [];
-
-  const filteredAndSortedTodos = useMemo(() => {
-    let filtered = allTodos;
-
-    // Apply search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(
-        (todo) =>
-          todo.title.toLowerCase().includes(query) ||
-          (todo.description && todo.description.toLowerCase().includes(query))
-      );
-    }
-
-    // Apply status filter (already done by backend, but we need to handle "all")
-    if (filter === "active") {
-      filtered = filtered.filter((todo) => !todo.completed);
-    } else if (filter === "completed") {
-      filtered = filtered.filter((todo) => todo.completed);
-    }
-
-    // Apply sorting
-    const sorted = [...filtered].sort((a, b) => {
-      switch (sortBy) {
-        case "title":
-          return a.title.localeCompare(b.title);
-        case "status":
-          if (a.completed === b.completed) {
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-          }
-          return a.completed ? 1 : -1;
-        case "date":
-        default:
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }
-    });
-
-    return sorted;
-  }, [allTodos, searchQuery, filter, sortBy]);
-
-  if (filteredAndSortedTodos.length === 0 && !isLoading) {
+  if (filteredAndSortedTodos.length === 0) {
     return (
       <EmptyState
         icon={CheckSquare}

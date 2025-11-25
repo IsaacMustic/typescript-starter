@@ -4,14 +4,21 @@ import posthog from "posthog-js";
 import { useEffect } from "react";
 import { env } from "@/env";
 
-export function initAnalytics() {
-  if (
+function isPostHogConfigured(): boolean {
+  return !!(
     typeof window !== "undefined" &&
     env.NEXT_PUBLIC_POSTHOG_KEY &&
     env.NEXT_PUBLIC_POSTHOG_HOST
-  ) {
-    posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
-      api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
+  );
+}
+
+export function initAnalytics() {
+  if (isPostHogConfigured()) {
+    const key = env.NEXT_PUBLIC_POSTHOG_KEY;
+    const host = env.NEXT_PUBLIC_POSTHOG_HOST;
+    if (!key || !host) return;
+    posthog.init(key, {
+      api_host: host,
       loaded: (posthog) => {
         if (process.env.NODE_ENV === "development") {
           posthog.debug();
@@ -28,13 +35,27 @@ export function useAnalytics() {
 }
 
 export function trackEvent(eventName: string, properties?: Record<string, unknown>) {
-  if (typeof window !== "undefined") {
-    posthog.capture(eventName, properties);
+  if (isPostHogConfigured()) {
+    try {
+      posthog.capture(eventName, properties);
+    } catch (error) {
+      // Silently fail if PostHog isn't initialized yet
+      if (process.env.NODE_ENV === "development") {
+        console.warn("PostHog capture failed:", error);
+      }
+    }
   }
 }
 
 export function identifyUser(userId: string, properties?: Record<string, unknown>) {
-  if (typeof window !== "undefined") {
-    posthog.identify(userId, properties);
+  if (isPostHogConfigured()) {
+    try {
+      posthog.identify(userId, properties);
+    } catch (error) {
+      // Silently fail if PostHog isn't initialized yet
+      if (process.env.NODE_ENV === "development") {
+        console.warn("PostHog identify failed:", error);
+      }
+    }
   }
 }

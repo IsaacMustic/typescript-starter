@@ -39,7 +39,8 @@ export const billingRouter = router({
       where: eq(subscriptions.userId, ctx.user.id),
     });
 
-    return subscription;
+    // Return null instead of undefined to satisfy React Query requirements
+    return subscription ?? null;
   }),
 
   getPlans: publicWithMiddleware.query(async () => {
