@@ -1,11 +1,13 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { RouterOutputs } from "@/lib/trpc";
 import { trpc } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
 
 export type Todo = Omit<
   RouterOutputs["todo"]["getAll"]["todos"][number],
@@ -74,32 +76,40 @@ export function TodoItem({ todo }: { todo: Todo }) {
   });
 
   return (
-    <Card className="p-4">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4 flex-1">
-          <Checkbox
-            checked={todo.completed}
-            onCheckedChange={() => toggleComplete({ id: todo.id })}
-            disabled={isToggling}
-            aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
-          />
-          <div className="flex-1">
-            <p className={todo.completed ? "line-through text-muted-foreground" : "font-medium"}>
-              {todo.title}
-            </p>
-            {todo.description && (
-              <p className="text-sm text-muted-foreground">{todo.description}</p>
+    <Card
+      variant="interactive"
+      className={cn("p-4 transition-smooth animate-in", todo.completed && "opacity-75")}
+    >
+      <div className="flex items-start gap-4">
+        <Checkbox
+          checked={todo.completed}
+          onCheckedChange={() => toggleComplete({ id: todo.id })}
+          disabled={isToggling}
+          aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
+          className="mt-1"
+        />
+        <div className="flex-1 min-w-0">
+          <p
+            className={cn(
+              "font-medium transition-smooth",
+              todo.completed && "line-through text-muted-foreground"
             )}
-          </div>
+          >
+            {todo.title}
+          </p>
+          {todo.description && (
+            <p className="text-sm text-muted-foreground mt-1">{todo.description}</p>
+          )}
         </div>
         <Button
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={() => deleteTodo({ id: todo.id })}
           disabled={isDeleting}
-          className="text-destructive hover:text-destructive"
+          className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0"
+          aria-label="Delete todo"
         >
-          {isDeleting ? "Deleting..." : "Delete"}
+          <Trash2 className="h-4 w-4" />
         </Button>
       </div>
     </Card>

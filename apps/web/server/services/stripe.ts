@@ -4,6 +4,16 @@ import { db } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { invoices, subscriptions, users } from "@/server/db/schema";
 
+/**
+ * Create or retrieve a Stripe customer for a user
+ * If the user already has a Stripe customer ID, retrieves the existing customer.
+ * Otherwise, creates a new Stripe customer and updates the user record.
+ *
+ * @param userId - User ID from database
+ * @param email - User's email address
+ * @returns Stripe customer ID
+ * @throws Error if Stripe is not configured or customer creation fails
+ */
 export async function createOrGetStripeCustomer(userId: string, email: string): Promise<string> {
   if (!stripe) {
     throw new Error("Stripe is not configured");

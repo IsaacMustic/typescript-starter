@@ -7,13 +7,24 @@ import { stripe } from "@/lib/stripe";
 import { invoices, products, subscriptions, todos, users } from "@/server/db/schema";
 import { createOrGetStripeCustomer } from "@/server/services/stripe";
 import { publicProcedure, router } from "../init";
+import { analytics } from "../middleware/analytics";
 import { isAuthenticated } from "../middleware/auth";
+import { errorHandling } from "../middleware/error-handling";
 import { logging } from "../middleware/logging";
 import { rateLimit } from "../middleware/rate-limit";
 
-const protectedProcedure = publicProcedure.use(isAuthenticated).use(rateLimit).use(logging);
+const protectedProcedure = publicProcedure
+  .use(isAuthenticated)
+  .use(rateLimit)
+  .use(analytics)
+  .use(errorHandling)
+  .use(logging);
 
-const publicWithMiddleware = publicProcedure.use(rateLimit).use(logging);
+const publicWithMiddleware = publicProcedure
+  .use(rateLimit)
+  .use(analytics)
+  .use(errorHandling)
+  .use(logging);
 
 export const billingRouter = router({
   getSubscription: protectedProcedure.query(async ({ ctx }) => {

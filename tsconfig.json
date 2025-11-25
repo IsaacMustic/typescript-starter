@@ -19,6 +19,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true
   },
-  "exclude": ["node_modules", ".next", "dist", "build", ".turbo", "apps", "packages"]
+  "include": ["base.ts"]
 }
 

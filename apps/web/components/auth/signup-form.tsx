@@ -1,13 +1,29 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Lock, Mail, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { authClient } from "@/lib/auth-client";
+import { trpc } from "@/lib/trpc";
+import { OAuthButtons } from "./oauth-buttons";
 
 const signupSchema = z
   .object({
@@ -31,13 +47,16 @@ type SignupFormData = z.infer<typeof signupSchema>;
 export function SignupForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const sendWelcomeEmail = trpc.auth.sendWelcomeEmail.useMutation();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignupFormData>({
+  const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      acceptTerms: false,
+    },
   });
 
   const onSubmit = async (data: SignupFormData) => {
@@ -53,6 +72,17 @@ export function SignupForm() {
       if (result.error) {
         toast.error(result.error.message ?? "An error occurred");
       } else {
+        // Send welcome email (don't block on failure)
+        try {
+          await sendWelcomeEmail.mutateAsync({
+            name: data.name,
+            email: data.email,
+          });
+        } catch (emailError) {
+          // Welcome email failure shouldn't block signup
+          console.error("Failed to send welcome email:", emailError);
+        }
+
         toast.success(
           "Account created successfully! Please check your email to verify your account."
         );
@@ -65,119 +95,129 @@ export function SignupForm() {
     }
   };
 
-  const onError = () => {
-    if (errors.name) {
-      toast.error(errors.name.message);
-    }
-    if (errors.email) {
-      toast.error(errors.email.message);
-    }
-    if (errors.password) {
-      toast.error(errors.password.message);
-    }
-    if (errors.acceptTerms) {
-      toast.error(errors.acceptTerms.message);
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-4">
-      <div className="space-y-2">
-        <label htmlFor="name" className="text-sm font-medium">
-          Name
-        </label>
-        <input
-          id="name"
-          type="text"
-          {...register("name")}
-          className="w-full px-3 py-2 border rounded-md"
-          disabled={isLoading}
-          aria-invalid={errors.name ? "true" : "false"}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="John Doe"
+                    className="pl-9"
+                    variant={form.formState.errors.name ? "error" : "default"}
+                    disabled={isLoading}
+                    {...field}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.name && (
-          <p className="text-sm text-destructive" role="alert">
-            {errors.name.message}
-          </p>
-        )}
-      </div>
 
-      <div className="space-y-2">
-        <label htmlFor="email" className="text-sm font-medium">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          {...register("email")}
-          className="w-full px-3 py-2 border rounded-md"
-          disabled={isLoading}
-          aria-invalid={errors.email ? "true" : "false"}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="email"
+                    placeholder="name@example.com"
+                    className="pl-9"
+                    variant={form.formState.errors.email ? "error" : "default"}
+                    disabled={isLoading}
+                    {...field}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.email && (
-          <p className="text-sm text-destructive" role="alert">
-            {errors.email.message}
-          </p>
-        )}
-      </div>
 
-      <div className="space-y-2">
-        <label htmlFor="password" className="text-sm font-medium">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          {...register("password")}
-          className="w-full px-3 py-2 border rounded-md"
-          disabled={isLoading}
-          aria-invalid={errors.password ? "true" : "false"}
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="password"
+                    placeholder="Create a strong password"
+                    className="pl-9"
+                    variant={form.formState.errors.password ? "error" : "default"}
+                    disabled={isLoading}
+                    {...field}
+                  />
+                </div>
+              </FormControl>
+              <FormDescription>
+                Must be at least 8 characters with uppercase, lowercase, number, and special
+                character.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {errors.password && (
-          <p className="text-sm text-destructive" role="alert">
-            {errors.password.message}
-          </p>
-        )}
-        <p className="text-xs text-muted-foreground">
-          Password must be at least 8 characters and include uppercase, lowercase, number, and
-          special character.
-        </p>
-      </div>
 
-      <div className="space-y-2">
-        <div className="flex items-start gap-2">
-          <input
-            id="acceptTerms"
-            type="checkbox"
-            {...register("acceptTerms")}
-            className="mt-1"
-            disabled={isLoading}
-            aria-invalid={errors.acceptTerms ? "true" : "false"}
-          />
-          <label htmlFor="acceptTerms" className="text-sm leading-5">
-            I accept the{" "}
-            <Link href="/terms" className="text-primary underline hover:no-underline">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link href="/privacy" className="text-primary underline hover:no-underline">
-              Privacy Policy
-            </Link>
-          </label>
+        <FormField
+          control={form.control}
+          name="acceptTerms"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel className="text-sm font-normal">
+                  I accept the{" "}
+                  <Link href="/terms" className="text-primary underline hover:no-underline">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link href="/privacy" className="text-primary underline hover:no-underline">
+                    Privacy Policy
+                  </Link>
+                </FormLabel>
+                <FormMessage />
+              </div>
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" className="w-full" loading={isLoading}>
+          {isLoading ? "Creating account..." : "Sign Up"}
+        </Button>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <Separator />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+          </div>
         </div>
-        {errors.acceptTerms && (
-          <p className="text-sm text-destructive" role="alert">
-            {errors.acceptTerms.message}
-          </p>
-        )}
-      </div>
 
-      <button
-        type="submit"
-        className="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md font-medium disabled:opacity-50"
-        disabled={isLoading}
-      >
-        {isLoading ? "Creating account..." : "Sign Up"}
-      </button>
-    </form>
+        <OAuthButtons />
+      </form>
+    </Form>
   );
 }

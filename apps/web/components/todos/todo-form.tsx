@@ -1,13 +1,21 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { trpc } from "@/lib/trpc";
 
@@ -23,7 +31,7 @@ export function TodoForm() {
   const { mutate: createTodo, isPending } = trpc.todo.create.useMutation({
     onSuccess: () => {
       utils.todo.getAll.invalidate();
-      reset();
+      form.reset();
       toast.success("Todo created successfully");
     },
     onError: (err: { message: string }) => {
@@ -31,13 +39,12 @@ export function TodoForm() {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<TodoFormData>({
+  const form = useForm<TodoFormData>({
     resolver: zodResolver(todoSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+    },
   });
 
   const onSubmit = (data: TodoFormData) => {
@@ -45,43 +52,58 @@ export function TodoForm() {
   };
 
   return (
-    <Card className="p-4">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            {...register("title")}
-            disabled={isPending}
-            aria-invalid={errors.title ? "true" : "false"}
-          />
-          {errors.title && (
-            <p className="text-sm text-destructive" role="alert">
-              {errors.title.message}
-            </p>
-          )}
-        </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Create New Todo</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter todo title"
+                      variant={form.formState.errors.title ? "error" : "default"}
+                      disabled={isPending}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <div className="space-y-2">
-          <Label htmlFor="description">Description (optional)</Label>
-          <Textarea
-            id="description"
-            {...register("description")}
-            rows={3}
-            disabled={isPending}
-            aria-invalid={errors.description ? "true" : "false"}
-          />
-          {errors.description && (
-            <p className="text-sm text-destructive" role="alert">
-              {errors.description.message}
-            </p>
-          )}
-        </div>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description (optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Add a description..."
+                      rows={3}
+                      disabled={isPending}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <Button type="submit" disabled={isPending}>
-          {isPending ? "Creating..." : "Create Todo"}
-        </Button>
-      </form>
+            <Button type="submit" disabled={isPending} loading={isPending}>
+              <Plus className="mr-2 h-4 w-4" />
+              {isPending ? "Creating..." : "Create Todo"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
     </Card>
   );
 }

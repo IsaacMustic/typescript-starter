@@ -1,6 +1,8 @@
 "use client";
 
+import { CheckSquare } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { type Todo, TodoItem } from "./todo-item";
@@ -31,9 +33,11 @@ export function TodoList() {
 
   if (!data || data.todos.length === 0) {
     return (
-      <Card className="p-8 text-center">
-        <p className="text-muted-foreground">No todos yet. Create your first one!</p>
-      </Card>
+      <EmptyState
+        icon={CheckSquare}
+        title="No todos yet"
+        description="Create your first todo to get started!"
+      />
     );
   }
 

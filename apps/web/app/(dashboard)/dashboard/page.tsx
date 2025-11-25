@@ -1,6 +1,7 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
+import { Activity, CheckSquare, CreditCard } from "lucide-react";
+import { StatCard } from "@/components/dashboard/stat-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 
@@ -13,7 +14,7 @@ export default function DashboardPage() {
   const isLoading = isLoadingUser || isLoadingSubscription || isLoadingUsage;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in">
       <div>
         <h1 className="text-3xl font-bold">Dashboard</h1>
         <p className="text-muted-foreground mt-2">
@@ -21,31 +22,32 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card className="p-6">
-          <h3 className="text-sm font-medium text-muted-foreground">Subscription</h3>
-          {isLoading ? (
-            <Skeleton className="h-8 w-16 mt-2" />
-          ) : (
-            <p className="text-2xl font-bold mt-2">{subscription ? "Pro" : "Free"}</p>
-          )}
-        </Card>
-        <Card className="p-6">
-          <h3 className="text-sm font-medium text-muted-foreground">Todos</h3>
-          {isLoading ? (
-            <Skeleton className="h-8 w-16 mt-2" />
-          ) : (
-            <p className="text-2xl font-bold mt-2">{usage?.todos ?? 0}</p>
-          )}
-        </Card>
-        <Card className="p-6">
-          <h3 className="text-sm font-medium text-muted-foreground">Status</h3>
-          {isLoading ? (
-            <Skeleton className="h-8 w-16 mt-2" />
-          ) : (
-            <p className="text-2xl font-bold mt-2 capitalize">{subscription?.status ?? "Active"}</p>
-          )}
-        </Card>
+      <div className="grid gap-6 md:grid-cols-3">
+        <StatCard
+          title="Subscription"
+          value={subscription ? "Pro" : "Free"}
+          icon={CreditCard}
+          isLoading={isLoading}
+          description={
+            subscription
+              ? `Active until ${new Date(subscription.stripeCurrentPeriodEnd).toLocaleDateString()}`
+              : "Upgrade to unlock more features"
+          }
+        />
+        <StatCard
+          title="Todos"
+          value={usage?.todos ?? 0}
+          icon={CheckSquare}
+          isLoading={isLoading}
+          description={subscription ? "Unlimited" : "10 remaining"}
+        />
+        <StatCard
+          title="Status"
+          value={subscription?.status ?? "Active"}
+          icon={Activity}
+          isLoading={isLoading}
+          description="Account status"
+        />
       </div>
     </div>
   );

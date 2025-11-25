@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
+  serverExternalPackages: ["require-in-the-middle"],
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [],

@@ -3,11 +3,18 @@ import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { todos } from "@/server/db/schema";
 import { publicProcedure, router } from "../init";
+import { analytics } from "../middleware/analytics";
 import { isAuthenticated } from "../middleware/auth";
+import { errorHandling } from "../middleware/error-handling";
 import { logging } from "../middleware/logging";
 import { rateLimit } from "../middleware/rate-limit";
 
-const protectedProcedure = publicProcedure.use(isAuthenticated).use(rateLimit).use(logging);
+const protectedProcedure = publicProcedure
+  .use(isAuthenticated)
+  .use(rateLimit)
+  .use(analytics)
+  .use(errorHandling)
+  .use(logging);
 
 export const todoRouter = router({
   getAll: protectedProcedure
