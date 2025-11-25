@@ -18,7 +18,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/dashboard/billing/plans"
+                  href="/pricing"
                   className="text-muted-foreground hover:text-foreground transition-smooth"
                 >
                   Pricing

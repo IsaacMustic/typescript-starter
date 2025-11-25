@@ -1,16 +1,24 @@
 "use client";
 
 import { CheckSquare } from "lucide-react";
+import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc";
 import { type Todo, TodoItem } from "./todo-item";
 
-export function TodoList() {
+interface TodoListProps {
+  searchQuery?: string;
+  filter?: "all" | "active" | "completed";
+  sortBy?: "date" | "title" | "status";
+}
+
+export function TodoList({ searchQuery = "", filter = "all", sortBy = "date" }: TodoListProps) {
   const { data, isLoading } = trpc.todo.getAll.useQuery({
-    limit: 50,
+    limit: 100,
     offset: 0,
+    completed: filter === "all" ? undefined : filter === "completed",
   });
 
   if (isLoading) {
@@ -43,11 +51,64 @@ export function TodoList() {
 
   // tRPC serializes Date objects as strings over JSON, but TypeScript infers Date from schema
   // biome-ignore lint/suspicious/noExplicitAny: Type assertion needed due to tRPC serialization
-  const todos = data.todos as any as Todo[];
+  const allTodos = (data?.todos as any as Todo[]) ?? [];
+
+  const filteredAndSortedTodos = useMemo(() => {
+    let filtered = allTodos;
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (todo) =>
+          todo.title.toLowerCase().includes(query) ||
+          (todo.description && todo.description.toLowerCase().includes(query))
+      );
+    }
+
+    // Apply status filter (already done by backend, but we need to handle "all")
+    if (filter === "active") {
+      filtered = filtered.filter((todo) => !todo.completed);
+    } else if (filter === "completed") {
+      filtered = filtered.filter((todo) => todo.completed);
+    }
+
+    // Apply sorting
+    const sorted = [...filtered].sort((a, b) => {
+      switch (sortBy) {
+        case "title":
+          return a.title.localeCompare(b.title);
+        case "status":
+          if (a.completed === b.completed) {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          }
+          return a.completed ? 1 : -1;
+        case "date":
+        default:
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+    });
+
+    return sorted;
+  }, [allTodos, searchQuery, filter, sortBy]);
+
+  if (filteredAndSortedTodos.length === 0 && !isLoading) {
+    return (
+      <EmptyState
+        icon={CheckSquare}
+        title={searchQuery ? "No todos found" : "No todos yet"}
+        description={
+          searchQuery
+            ? "Try adjusting your search or filters"
+            : "Create your first todo to get started!"
+        }
+      />
+    );
+  }
 
   return (
     <div className="space-y-2">
-      {todos.map((todo) => (
+      {filteredAndSortedTodos.map((todo) => (
         <TodoItem key={todo.id} todo={todo} />
       ))}
     </div>

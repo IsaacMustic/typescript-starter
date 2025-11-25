@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckSquare, CreditCard, LayoutDashboard, Menu, Settings, User } from "lucide-react";
+import { Activity, CheckSquare, CreditCard, LayoutDashboard, Menu, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/todos", label: "Todos", icon: CheckSquare },
+  { href: "/dashboard/usage", label: "Usage", icon: Activity },
   { href: "/dashboard/profile", label: "Profile", icon: User },
   { href: "/dashboard/billing", label: "Billing", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },

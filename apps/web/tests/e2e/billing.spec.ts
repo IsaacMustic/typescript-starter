@@ -39,19 +39,57 @@ test.describe("Billing & Subscriptions", () => {
   });
 
   test.describe("Checkout Flow", () => {
+    test("should display checkout page without priceId", async ({ page }) => {
+      await page.goto("/dashboard/billing/checkout");
+      const url = page.url();
+      if (url.includes("/login")) {
+        test.skip("Authentication required");
+        return;
+      }
+      await expect(page.locator("h1, h2")).toContainText(/checkout/i);
+      await expect(page.locator("text=No price ID")).toBeVisible();
+    });
+
+    test("should show loading state when priceId is provided", async ({ page }) => {
+      await page.goto("/dashboard/billing/checkout?priceId=test_price_id");
+      const url = page.url();
+      if (url.includes("/login")) {
+        test.skip("Authentication required");
+        return;
+      }
+      // Should show loading or redirect
+      await expect(
+        page.locator("text=Redirecting|Creating checkout|Loading")
+      ).toBeVisible({ timeout: 5000 });
+    });
+
     test("should create checkout session", async ({ page: _page }) => {
       // This test would require:
       // 1. Authentication setup
       // 2. Stripe mock or test mode
       // 3. Checkout session creation
-      test.skip();
+      test.skip("Requires authentication and Stripe test setup");
     });
 
     test("should redirect to Stripe Checkout", async ({ page: _page }) => {
       // This test would require:
       // 1. Authentication setup
       // 2. Stripe Checkout integration
-      test.skip();
+      test.skip("Requires authentication and Stripe test setup");
+    });
+  });
+
+  test.describe("Portal Flow", () => {
+    test("should show loading state on portal page", async ({ page }) => {
+      await page.goto("/dashboard/billing/portal");
+      const url = page.url();
+      if (url.includes("/login")) {
+        test.skip("Authentication required");
+        return;
+      }
+      await expect(
+        page.locator("text=Redirecting|Creating portal|Loading")
+      ).toBeVisible({ timeout: 5000 });
     });
   });
 

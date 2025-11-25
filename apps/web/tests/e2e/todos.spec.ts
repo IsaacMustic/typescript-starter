@@ -79,13 +79,45 @@ test.describe("Todo Management", () => {
     });
   });
 
-  test.describe("Todo Filtering", () => {
+  test.describe("Todo Filtering and Search", () => {
+    test("should display search input", async ({ page }) => {
+      await page.goto("/dashboard/todos");
+      const url = page.url();
+      if (url.includes("/login")) {
+        test.skip("Authentication required");
+        return;
+      }
+      await expect(page.locator('input[placeholder*="Search"]')).toBeVisible();
+    });
+
+    test("should display filter tabs", async ({ page }) => {
+      await page.goto("/dashboard/todos");
+      const url = page.url();
+      if (url.includes("/login")) {
+        test.skip("Authentication required");
+        return;
+      }
+      await expect(page.locator('button:has-text("All")')).toBeVisible();
+      await expect(page.locator('button:has-text("Active")')).toBeVisible();
+      await expect(page.locator('button:has-text("Completed")')).toBeVisible();
+    });
+
+    test("should display sort selector", async ({ page }) => {
+      await page.goto("/dashboard/todos");
+      const url = page.url();
+      if (url.includes("/login")) {
+        test.skip("Authentication required");
+        return;
+      }
+      await expect(page.locator('button:has-text("Sort")')).toBeVisible();
+    });
+
     test("should filter by completion status", async ({ page: _page }) => {
       // This test would require:
       // 1. Authentication setup
       // 2. Multiple todos with different statuses
       // 3. Filter interaction
-      test.skip();
+      test.skip("Requires authentication and test data setup");
     });
   });
 
